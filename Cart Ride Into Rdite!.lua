@@ -168,12 +168,12 @@ game.Players.PlayerAdded:Connect(function(plr)
 	end
 	if not table.find(players, plr.Name) then
 		local players1 = game:GetService("Players"):GetPlayers()
+		table.remove(players1, table.find(players, plr.Name))
 		local playerbackup = {}
-		for i, v in pairs(players1) do
+		for i, v in pairs(players) do
 			table.insert(playerbackup, v)
 		end
 		playerdropdown:Refresh(playerbackup, true)
-		print("Player joined " .. plr.Name)
 	end
 end)
 
