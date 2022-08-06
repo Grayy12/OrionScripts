@@ -168,8 +168,8 @@ game.Players.PlayerAdded:Connect(function(plr)
 	end
 	local players2 = game:GetService("Players"):GetPlayers()
 	local playerbackup1 = {}
-	for i, v in pairs(players) do
-		table.insert(playerbackup1, tostring(v))
+	for i, v in pairs(players2) do
+		table.insert(playerbackup1, v.Name)
 		print(playerbackup1[i])
 	end
 	playerdropdown:Refresh(playerbackup1, true)
