@@ -9,6 +9,16 @@ local Window = OrionLib:MakeWindow({
 getgenv().CartOn = false
 getgenv().SpeedCart = false
 getgenv().SpeedValue = 50
+getgenv().Notis = true
+
+function MakeNoti(name, content, time)
+	OrionLib:MakeNotification({
+		Name = name,
+		Content = content,
+		Image = "rbxassetid://4483345998",
+		Time = time,
+	})
+end
 
 function makecartspeed(Value)
 	task.spawn(function()
@@ -67,6 +77,25 @@ local MainTab = Window:MakeTab({
 	PremiumOnly = false,
 })
 
+local MiscTab = Window:MakeTab({
+	Name = "Misc",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false,
+})
+
+local player = game.Players.LocalPlayer
+
+OrionLib:MakeNotification({
+	Name = "Welcome " .. player.Name .. "!",
+	Content = "Made by Grayy#9991",
+	Image = "rbxassetid://4483345998",
+	Time = 5,
+})
+
+local Section = MainTab:AddSection({
+	Name = "Carts",
+})
+
 MainTab:AddSlider({
 	Name = "Carts Speed",
 	Min = 0,
@@ -81,7 +110,7 @@ MainTab:AddSlider({
 })
 local launch = false
 MainTab:AddToggle({
-	Name = "Set All the Carts Speed",
+	Name = "Loop All The Carts Speed",
 	Callback = function(Value)
 		if launch then
 			getgenv().SpeedCart = Value
@@ -91,9 +120,82 @@ MainTab:AddToggle({
 	end,
 })
 MainTab:AddToggle({
-	Name = "Loop Carts off",
+	Name = "Loop Carts Off",
 	Callback = function(Value)
 		getgenv().CartOn = Value
 		Turncartsoff()
+	end,
+})
+
+local Section = MainTab:AddSection({
+	Name = "Teleport",
+})
+
+local players = {}
+
+for i, v in pairs(game.Players:GetPlayers()) do
+	table.insert(players, v.Name)
+end
+
+local a
+
+local playerdropdown = MainTab:AddDropdown({
+	Name = "Teleport To Player",
+	Options = players,
+	Callback = function(Value)
+		a = v
+		task.spawn(function()
+			for i, v in pairs(game.Players:GetPlayers()) do
+				if v.Name == Value then
+					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame
+				end
+			end
+		end)
+	end,
+})
+
+MiscTab:AddToggle({
+	Name = "Player Join/Leave Notifications",
+	Default = true,
+	Callback = function(Value)
+		getgenv().Notis = Value
+	end,
+})
+
+game.Players.PlayerAdded:Connect(function(plr)
+	if getgenv().Notis then
+		MakeNoti("Player Joined", plr.Name .. " has joined the game.", 3)
+	end
+	if not table.find(players, plr.Name) then
+		local players1 = game:GetService("Players"):GetPlayers()
+		local playerbackup = {}
+		for i, v in pairs(players1) do
+			table.insert(playerbackup, v)
+		end
+		playerdropdown:Refresh(playerbackup, true)
+		print("Player joined " .. plr.Name)
+	end
+end)
+
+game.Players.PlayerRemoving:Connect(function(plr)
+	if getgenv().Notis then
+		MakeNoti("Player Left", plr.Name .. " has left the game.", 3)
+	end
+	if table.find(players, plr.Name) then
+		local players1 = game:GetService("Players"):GetPlayers()
+		table.remove(players1, table.find(players, plr.Name))
+		local playerbackup = {}
+		for i, v in pairs(players) do
+			table.insert(playerbackup, v)
+		end
+		playerdropdown:Refresh(playerbackup, true)
+	end
+end)
+
+MainTab:AddButton({
+	Name = "Teleport To End",
+	Callback = function()
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+			CFrame.new(311.1185607910156, 852.7978515625, 321.91143798828125)
 	end,
 })
