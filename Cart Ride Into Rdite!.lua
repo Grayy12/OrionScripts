@@ -166,15 +166,13 @@ game.Players.PlayerAdded:Connect(function(plr)
 	if getgenv().Notis then
 		MakeNoti("Player Joined", plr.Name .. " has joined the game.", 3)
 	end
-	if not table.find(players, plr.Name) then
-		local players1 = game:GetService("Players"):GetPlayers()
-		table.remove(players1, table.find(players, plr.Name))
-		local playerbackup = {}
-		for i, v in pairs(players) do
-			table.insert(playerbackup, v)
-		end
-		playerdropdown:Refresh(playerbackup, true)
+	local players2 = game:GetService("Players"):GetPlayers()
+	local playerbackup1 = {}
+	for i, v in pairs(players) do
+		table.insert(playerbackup1, tostring(v))
+		print(playerbackup1[i])
 	end
+	playerdropdown:Refresh(playerbackup1, true)
 end)
 
 game.Players.PlayerRemoving:Connect(function(plr)
